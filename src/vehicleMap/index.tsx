@@ -24,7 +24,10 @@ const VehicleMap: React.FC = () => {
         {vehicles?.map((vehicle) => {
           return (
             <Marker position={vehicle.Position} key={vehicle.Name}>
-              <Popup>{vehicle.Name}</Popup>
+              <Popup>
+                <b>Name:</b> {vehicle.Name} <br />
+                <b>Route:</b> {vehicle.Route?.Code ?? 'Unknown'} - {vehicle.Route?.Name ?? 'Unknown'}
+              </Popup>
             </Marker>
           );
         })}
