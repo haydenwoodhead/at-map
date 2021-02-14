@@ -40,8 +40,10 @@ const VehicleMap: React.FC = () => {
       )}
       <MapContainer center={[-36.850109, 174.7677]} zoom={13} scrollWheelZoom={false}>
         <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>'
+          url={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/tiles/{z}/{x}/{y}?access_token=${
+            process.env.REACT_APP_MAPBOX_KEY ?? ''
+          }`}
         />
         {vehicles?.map((vehicle) => {
           return (
