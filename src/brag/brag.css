@@ -1,0 +1,19 @@
+.brag-modal {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 1000;
+
+  background-color: white;
+
+  box-shadow: 5px 10px;
+  border: 1px solid black;
+
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+}
+
+.brag-text {
+  display: block;
+  margin: 0.25rem;
+}
