@@ -1,8 +1,30 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { useVehicleLocationAPI } from 'src/atAPI';
+import L from 'leaflet';
 
+import { useVehicleLocationAPI } from 'src/atAPI';
 import 'src/vehicleMap/map.css';
+
+const busIcon = new L.Icon({
+  iconUrl: process.env.PUBLIC_URL + 'bus.png',
+  iconSize: [24, 24],
+});
+
+const trainIcon = new L.Icon({
+  iconUrl: process.env.PUBLIC_URL + 'train.png',
+  iconSize: [24, 24],
+});
+
+const icons: Record<number, L.Icon> = {
+  2: trainIcon,
+  3: busIcon,
+};
+
+const typeToName: Record<number, string> = {
+  2: 'Train',
+  3: 'Bus',
+  4: 'Ferry',
+};
 
 const VehicleMap: React.FC = () => {
   const { hasDoneFirstLoad, vehicles } = useVehicleLocationAPI();
@@ -23,10 +45,11 @@ const VehicleMap: React.FC = () => {
         />
         {vehicles?.map((vehicle) => {
           return (
-            <Marker position={vehicle.Position} key={vehicle.Name}>
+            <Marker position={vehicle.Position} key={vehicle.Name} icon={icons[vehicle.Type]}>
               <Popup>
-                <b>Name:</b> {vehicle.Name} <br />
-                <b>Route:</b> {vehicle.Route?.Code ?? 'Unknown'} - {vehicle.Route?.Name ?? 'Unknown'}
+                <b>{typeToName[vehicle.Type]}</b> - {vehicle.Name}
+                <br />
+                {vehicle.Route?.Code ?? 'Unknown'} - {vehicle.Route?.Name ?? 'Unknown'}
               </Popup>
             </Marker>
           );
