@@ -8,7 +8,7 @@ type VehicleLocationResp = {
 type Vehicle = {
   Name: string;
   LicensePlate: string;
-  Position: number[];
+  Position: [number, number];
   Route: Route;
   Type: number;
 };
@@ -24,12 +24,12 @@ type UseVehicleLocationAPIValue = {
 };
 
 export const useVehicleLocationAPI = (): UseVehicleLocationAPIValue => {
-  const [hasDoneFirstLoad, setHasDoneFirstLoad] = useState(true);
+  const [hasDoneFirstLoad, setHasDoneFirstLoad] = useState(false);
   const [vehicles, setVehicles] = useState<Vehicle[]>();
 
   const doGetVehicleLocation = () => {
-    axios.get<VehicleLocationResp>('/api/locations').then((resp) => {
-      setHasDoneFirstLoad(false);
+    void axios.get<VehicleLocationResp>('/api/locations').then((resp) => {
+      setHasDoneFirstLoad(true);
       setVehicles(resp.data.Vehicles);
       setTimeout(doGetVehicleLocation, 30000);
     });
