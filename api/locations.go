@@ -32,6 +32,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Add("Cache-Control", "max-age=0, s-maxage=29")
 	returnJSON(w, http.StatusOK, LocationsResp{Vehicles: v})
 }
 
