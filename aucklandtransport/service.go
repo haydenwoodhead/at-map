@@ -2,6 +2,7 @@ package aucklandtransport
 
 type atAPIProvider interface {
 	getGTFSVehicleLocations() ([]gtfsVehicleLocation, error)
+	getFerryLocations() ([]atFerryLocation, error)
 	getGTFSRoutes() (map[string]gtfsRoute, error)
 }
 
@@ -22,8 +23,8 @@ type Vehicle struct {
 }
 
 type Route struct {
-	Name string
-	Code string
+	Name string `json:"Name,omitempty"`
+	Code string `json:"Code,omitempty"`
 }
 
 type gtfsVehicleLocationResponse struct {
@@ -60,8 +61,24 @@ type gtfsRoute struct {
 	RouteType      int    `json:"route_type"`
 }
 
+type atFerryLocationResponse struct {
+	Response []atFerryLocation
+}
+
+type atFerryLocation struct {
+	Lat      float64
+	Lng      float64
+	Vessel   string
+	Callsign string
+}
+
 func (s *Service) GetActiveVehicles() ([]Vehicle, error) {
 	vehicleLocations, err := s.api.getGTFSVehicleLocations()
+	if err != nil {
+		return nil, err
+	}
+
+	ferryLocations, err := s.api.getFerryLocations()
 	if err != nil {
 		return nil, err
 	}
@@ -71,14 +88,18 @@ func (s *Service) GetActiveVehicles() ([]Vehicle, error) {
 		return nil, err
 	}
 
-	return s.transformProviderResp(vehicleLocations, routes), nil
+	landVehicles := s.transformProviderResp(vehicleLocations, routes)
+	ferryVehicles := s.transfromFerryLocationRespose(ferryLocations)
+	vehicles := append(landVehicles, ferryVehicles...)
+
+	return vehicles, nil
 }
 
 func (s *Service) transformProviderResp(vehicleLocations []gtfsVehicleLocation, routes map[string]gtfsRoute) []Vehicle {
 	vehicles := make([]Vehicle, 0, len(vehicleLocations))
 
 	for _, vl := range vehicleLocations {
-		if vl.IsDeleted {
+		if vl.IsDeleted || vl.Vehicle.Trip.RouteID == "" {
 			continue
 		}
 
@@ -98,5 +119,20 @@ func (s *Service) transformProviderResp(vehicleLocations []gtfsVehicleLocation, 
 		vehicles = append(vehicles, v)
 	}
 
+	return vehicles
+}
+
+func (s *Service) transfromFerryLocationRespose(ferryLocations []atFerryLocation) []Vehicle {
+	vehicles := make([]Vehicle, 0, len(ferryLocations))
+
+	for _, fl := range ferryLocations {
+		v := Vehicle{
+			Name:         fl.Vessel,
+			LicensePlate: fl.Callsign,
+			Type:         4,
+			Position:     []float64{fl.Lat, fl.Lng},
+		}
+		vehicles = append(vehicles, v)
+	}
 	return vehicles
 }

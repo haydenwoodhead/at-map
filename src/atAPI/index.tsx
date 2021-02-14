@@ -14,8 +14,8 @@ type Vehicle = {
 };
 
 type Route = {
-  Name: string;
-  Code: string;
+  Name?: string;
+  Code?: string;
 };
 
 type UseVehicleLocationAPIValue = {

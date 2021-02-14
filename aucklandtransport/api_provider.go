@@ -39,10 +39,37 @@ func (a *apiProvider) getGTFSVehicleLocations() ([]gtfsVehicleLocation, error) {
 	var realtimeResponse gtfsVehicleLocationResponse
 	err = json.NewDecoder(resp.Body).Decode(&realtimeResponse)
 	if err != nil {
-		return nil, fmt.Errorf("failed to deocode gtfs vehicle locations: %w", err)
+		return nil, fmt.Errorf("failed to decode gtfs vehicle locations: %w", err)
 	}
 
 	return realtimeResponse.Response.Entity, nil
+}
+
+func (a *apiProvider) getFerryLocations() ([]atFerryLocation, error) {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/public/realtime/ferrypositions", atBasePath), nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate req for ferry locations: %w", err)
+	}
+
+	req.Header.Add("Ocp-Apim-Subscription-Key", a.apiKey)
+
+	resp, err := a.client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get ferry locations: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("ferry location api returned error code: %v", resp.StatusCode)
+	}
+
+	var ferryResponse atFerryLocationResponse
+	err = json.NewDecoder(resp.Body).Decode(&ferryResponse)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode ferry locations: %w", err)
+	}
+
+	return ferryResponse.Response, nil
 }
 
 func (a *apiProvider) getGTFSRoutes() (map[string]gtfsRoute, error) {
