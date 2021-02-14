@@ -8,19 +8,28 @@ const VehicleMap: React.FC = () => {
   const { hasDoneFirstLoad, vehicles } = useVehicleLocationAPI();
 
   return (
-    <MapContainer center={[-36.850109, 174.7677]} zoom={13} scrollWheelZoom={false}>
-      <TileLayer
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      {vehicles?.map((vehicle) => {
-        return (
-          <Marker position={vehicle.Position} key={vehicle.Name}>
-            <Popup>{vehicle.Name}</Popup>
-          </Marker>
-        );
-      })}
-    </MapContainer>
+    <>
+      {!hasDoneFirstLoad && (
+        <div className="loading-box">
+          <div className="loading-modal">
+            <p className="loading-text">Loading...</p>
+          </div>
+        </div>
+      )}
+      <MapContainer center={[-36.850109, 174.7677]} zoom={13} scrollWheelZoom={false}>
+        <TileLayer
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {vehicles?.map((vehicle) => {
+          return (
+            <Marker position={vehicle.Position} key={vehicle.Name}>
+              <Popup>{vehicle.Name}</Popup>
+            </Marker>
+          );
+        })}
+      </MapContainer>
+    </>
   );
 };
 
