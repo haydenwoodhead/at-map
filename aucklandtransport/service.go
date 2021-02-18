@@ -78,10 +78,10 @@ func (s *Service) GetActiveVehicles() ([]Vehicle, error) {
 		return nil, err
 	}
 
-	// ferryLocations, err := s.api.getFerryLocations()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	ferryLocations, err := s.api.getFerryLocations()
+	if err != nil {
+		return nil, err
+	}
 
 	routes, err := s.api.getGTFSRoutes()
 	if err != nil {
@@ -89,10 +89,10 @@ func (s *Service) GetActiveVehicles() ([]Vehicle, error) {
 	}
 
 	landVehicles := s.transformProviderResp(vehicleLocations, routes)
-	// ferryVehicles := s.transfromFerryLocationRespose(ferryLocations)
-	// vehicles := append(landVehicles, ferryVehicles...)
+	ferryVehicles := s.transfromFerryLocationRespose(ferryLocations)
+	vehicles := append(landVehicles, ferryVehicles...)
 
-	return landVehicles, nil
+	return vehicles, nil
 }
 
 func (s *Service) transformProviderResp(vehicleLocations []gtfsVehicleLocation, routes map[string]gtfsRoute) []Vehicle {

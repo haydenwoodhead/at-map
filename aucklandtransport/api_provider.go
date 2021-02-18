@@ -52,6 +52,7 @@ func (a *apiProvider) getFerryLocations() ([]atFerryLocation, error) {
 	}
 
 	req.Header.Add("Ocp-Apim-Subscription-Key", a.apiKey)
+	req.Header.Add("Accept-Encoding", "None") // hack to get past api 502ing
 
 	resp, err := a.client.Do(req)
 	if err != nil {

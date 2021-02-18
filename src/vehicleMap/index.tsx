@@ -15,9 +15,15 @@ const trainIcon = new L.Icon({
   iconSize: [24, 24],
 });
 
+const ferryIcon = new L.Icon({
+  iconUrl: process.env.PUBLIC_URL + 'ferry.png',
+  iconSize: [24, 24],
+});
+
 const icons: Record<number, L.Icon> = {
   2: trainIcon,
   3: busIcon,
+  4: ferryIcon,
 };
 
 const typeToName: Record<number, string> = {
